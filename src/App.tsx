@@ -17,10 +17,27 @@ export const App: React.FC<Props> = ({ persons, delay = 300, onSelected }) => {
 
   const applyQuery = useCallback(debounce(setAppliedQuery, delay), [delay]);
 
+  React.useEffect(() => {
+    return () => {
+      applyQuery.cancel?.();
+    };
+  }, [applyQuery]);
+
   const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
+    const value = event.target.value;
+
+    setQuery(value);
     setSelectedPerson(null);
-    applyQuery(event.target.value);
+
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      setAppliedQuery('');
+
+      return;
+    }
+
+    applyQuery(trimmed);
   };
 
   const filteredPeople = persons.filter(person =>
@@ -77,7 +94,7 @@ export const App: React.FC<Props> = ({ persons, delay = 300, onSelected }) => {
           )}
         </div>
 
-        {query && filteredPeople.length === 0 && (
+        {(appliedQuery || query) && filteredPeople.length === 0 && (
           <div
             className="
             notification
