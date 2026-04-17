@@ -37,6 +37,10 @@ export const App: React.FC<Props> = ({ persons, delay = 300, onSelected }) => {
       return;
     }
 
+    if (trimmed === appliedQuery) {
+      return;
+    }
+
     applyQuery(trimmed);
   };
 
@@ -83,6 +87,7 @@ export const App: React.FC<Props> = ({ persons, delay = 300, onSelected }) => {
                       setSelectedPerson(person);
                       setQuery(person.name);
                       setAppliedQuery(person.name);
+                      setIsFocused(false);
                       onSelected?.(person);
                     }}
                   >
@@ -94,7 +99,7 @@ export const App: React.FC<Props> = ({ persons, delay = 300, onSelected }) => {
           )}
         </div>
 
-        {(appliedQuery || query) && filteredPeople.length === 0 && (
+        {appliedQuery && filteredPeople.length === 0 && (
           <div
             className="
             notification
